@@ -1,0 +1,14 @@
+<template>
+  <a class="block bg-white border rounded shadow hover:shadow-md transition overflow-hidden group">
+    <div class="aspect-video bg-gray-100 flex items-center justify-center relative">
+      <img data-ref="image" alt="" class="absolute inset-0 w-full h-full object-cover hidden" />
+      <span data-ref="no-image" class="text-xs text-gray-500">No Image</span>
+    </div>
+    <div class="p-3 space-y-1">
+      <h3 class="font-medium text-sm line-clamp-2" data-ref="title"></h3>
+      <p class="text-xs text-gray-500">Bids: <span data-ref="bids">0</span> • Highest: <span data-ref="highest">0</span>
+      </p>
+      <p class="text-[10px] text-gray-400">Ends: <span data-ref="deadline"></span></p>
+    </div>
+  </a>
+</template>

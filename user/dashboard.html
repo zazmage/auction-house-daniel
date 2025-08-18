@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main id="page-root" class="flex-1 max-w-6xl mx-auto w-full p-4 space-y-8">
+    <section class="bg-white p-4 rounded shadow space-y-4" id="profile-section">
+      <div class="flex gap-4 items-center">
+        <img id="profile-avatar" class="w-20 h-20 rounded object-cover bg-gray-200" alt="avatar" />
+        <div>
+          <h1 id="profile-name" class="text-xl font-semibold"></h1>
+          <p id="profile-email" class="text-sm text-gray-600"></p>
+          <p class="text-sm"><strong>Credits:</strong> <span id="profile-credits"></span></p>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Bio</label>
+        <textarea id="profile-bio" rows="3" class="mt-1 w-full border rounded px-3 py-2"></textarea>
+        <button id="save-profile" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded">Save Bio (Mock)</button>
+        <p id="profile-msg" class="text-xs"></p>
+      </div>
+    </section>
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold">My Listings</h2>
+      <div id="my-listings" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+      <p id="my-listings-empty" class="text-sm text-gray-500 hidden">No listings yet.</p>
+    </section>
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold">My Bids</h2>
+      <ul id="my-bids" class="space-y-1 text-sm list-disc pl-5"></ul>
+      <p id="my-bids-empty" class="text-sm text-gray-500 hidden">No bids placed.</p>
+    </section>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/user/dashboard.js"></script>
+</body>
+
+</html>

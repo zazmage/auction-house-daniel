@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Create Listing</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main id="page-root" class="flex-1 max-w-2xl mx-auto w-full p-4 space-y-6">
+    <h1 class="text-xl font-semibold">Create Listing</h1>
+    <form id="create-form" class="space-y-4 bg-white p-4 rounded shadow">
+      <div>
+        <label class="block text-sm font-medium">Title</label>
+        <input name="title" required class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Deadline</label>
+        <input name="deadline" type="datetime-local" required class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Images (comma separated URLs)</label>
+        <textarea name="media" rows="2" class="mt-1 w-full border rounded px-3 py-2"
+          placeholder="https://..."></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Description</label>
+        <textarea name="description" rows="4" class="mt-1 w-full border rounded px-3 py-2"></textarea>
+      </div>
+      <button class="bg-green-600 text-white px-4 py-2 rounded w-full">Create (Mock)</button>
+      <p id="create-msg" class="text-sm"></p>
+    </form>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/listings/create.js"></script>
+</body>
+
+</html>

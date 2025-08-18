@@ -1,13 +1,29 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auction House | Home</title>
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+  <link rel="stylesheet" href="/src/styles/globals.css" />
+</head>
+
+<body class="min-h-full flex flex-col bg-gray-50 text-gray-900">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main class="flex-1 max-w-5xl mx-auto w-full p-4 space-y-6" id="page-root">
+    <section>
+      <h1 class="text-2xl font-bold mb-2">Welcome to the Auction House</h1>
+      <p class="text-sm text-gray-600">Browse current listings or sign in to create and bid.</p>
+    </section>
+    <section>
+      <h2 class="text-xl font-semibold mb-2">Featured Listings (Mock)</h2>
+      <div id="featured-listings" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/home.js"></script>
+</body>
+
 </html>

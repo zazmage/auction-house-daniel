@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Listings</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main class="flex-1 max-w-6xl mx-auto w-full p-4 space-y-6" id="page-root">
+    <h1 class="text-2xl font-semibold">All Listings</h1>
+    <form id="search-form" class="flex gap-2 flex-wrap items-center">
+      <input name="q" class="flex-1 border rounded px-3 py-2" placeholder="Search title..." />
+      <button class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+      <a href="/listings/create.html" class="ml-auto bg-green-600 text-white px-4 py-2 rounded" id="create-link">Create
+        Listing</a>
+    </form>
+    <div id="listings-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    <div id="empty-state" class="hidden text-gray-500 text-sm">No listings found.</div>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/listings/list.js"></script>
+</body>
+
+</html>

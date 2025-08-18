@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Listing Detail</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main id="page-root" class="flex-1 max-w-4xl mx-auto w-full p-4 space-y-6">
+    <a href="/listings/index.html" class="text-sm text-blue-600 underline">&larr; Back to Listings</a>
+    <article id="listing-detail" class="bg-white rounded shadow p-4 space-y-4">
+      <h1 id="detail-title" class="text-2xl font-bold"></h1>
+      <div id="detail-media" class="flex gap-2 flex-wrap"></div>
+      <p id="detail-description" class="text-sm text-gray-700"></p>
+      <p class="text-sm"><strong>Deadline:</strong> <span id="detail-deadline"></span></p>
+      <p class="text-sm"><strong>Owner:</strong> <span id="detail-owner"></span></p>
+      <p class="text-sm"><strong>Highest Bid:</strong> <span id="detail-highest"></span></p>
+      <section class="space-y-2">
+        <h2 class="font-semibold">Bid History</h2>
+        <ul id="bid-history" class="text-sm list-disc pl-5 space-y-1"></ul>
+      </section>
+      <form id="bid-form" class="space-y-2 bg-gray-50 p-3 rounded border">
+        <label class="block text-sm font-medium">Your Bid (credits)</label>
+        <input name="amount" type="number" min="1" required class="w-full border rounded px-3 py-2" />
+        <button class="bg-blue-600 text-white px-4 py-2 rounded w-full">Place Bid (Mock)</button>
+        <p id="bid-msg" class="text-xs"></p>
+      </form>
+    </article>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/listings/detail.js"></script>
+</body>
+
+</html>

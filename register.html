@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Register</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-6" id="page-root">
+    <h1 class="text-xl font-semibold">Register</h1>
+    <form id="register-form" class="space-y-4 bg-white p-4 rounded shadow">
+      <div>
+        <label class="block text-sm font-medium">Name</label>
+        <input type="text" name="name" required class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Email (@stud.noroff.no)</label>
+        <input type="email" name="email" required class="mt-1 w-full border rounded px-3 py-2"
+          placeholder="name@stud.noroff.no" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Password</label>
+        <input type="password" name="password" minlength="6" required class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+      <button class="bg-green-600 text-white px-4 py-2 rounded w-full">Create Account (Mock)</button>
+      <p id="register-msg" class="text-sm"></p>
+    </form>
+    <p class="text-sm">Have an account? <a class="text-blue-600 underline" href="/login.html">Login</a></p>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/register.js"></script>
+</body>
+
+</html>

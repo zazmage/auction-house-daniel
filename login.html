@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header" class="border-b bg-white"></header>
+  <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-6" id="page-root">
+    <h1 class="text-xl font-semibold">Login</h1>
+    <form id="login-form" class="space-y-4 bg-white p-4 rounded shadow">
+      <div>
+        <label class="block text-sm font-medium">Email</label>
+        <input type="email" name="email" required class="mt-1 w-full border rounded px-3 py-2"
+          placeholder="name@stud.noroff.no" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Password</label>
+        <input type="password" name="password" required class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+      <button class="bg-blue-600 text-white px-4 py-2 rounded w-full">Login (Mock)</button>
+      <p class="text-xs text-gray-500">Use any registered mock user email (see README). No real authentication yet.</p>
+    </form>
+    <p class="text-sm">No account? <a class="text-blue-600 underline" href="/register.html">Register</a></p>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/login.js"></script>
+</body>
+
+</html>

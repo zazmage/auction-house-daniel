@@ -1,0 +1,11 @@
+<nav class="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4">
+  <a href="/index.html" class="font-semibold">Auction House</a>
+  <a href="/listings/index.html" class="text-sm text-gray-700 hover:text-black">Listings</a>
+  <a href="/user/dashboard.html" data-auth class="text-sm text-gray-700 hover:text-black hidden">Dashboard</a>
+  <span class="ml-auto flex items-center gap-3">
+    <span data-auth class="hidden text-sm font-medium">Credits: <span id="nav-credits">0</span></span>
+    <a href="/login.html" data-guest class="text-sm text-blue-600 hover:underline">Login</a>
+    <a href="/register.html" data-guest class="text-sm text-blue-600 hover:underline">Register</a>
+    <button type="button" id="nav-logout" data-auth class="hidden text-sm text-red-600 hover:underline">Logout</button>
+  </span>
+</nav>

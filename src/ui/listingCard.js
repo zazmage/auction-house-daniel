@@ -16,7 +16,8 @@ export function renderListingCard(listing) {
   node.href = `/listings/detail.html?id=${listing.id}`
   node.dataset.id = listing.id
   node.querySelector('[data-ref="title"]').textContent = listing.title
-  node.querySelector('[data-ref="bids"]').textContent = listing.bids.length
+  const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : (listing._count?.bids ?? 0)
+  node.querySelector('[data-ref="bids"]').textContent = bidsCount
   node.querySelector('[data-ref="highest"]').textContent = listing.highest
   node.querySelector('[data-ref="deadline"]').textContent = new Date(listing.deadline).toLocaleString()
   const img = node.querySelector('[data-ref="image"]')

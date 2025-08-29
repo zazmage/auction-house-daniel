@@ -1,6 +1,7 @@
 import { boot } from '../../main/boot.js'
-import { listListings, currentUser } from '../../mock/data.js'
 import { renderListingCard } from '../../ui/listingCard.js'
+import { apiListListings } from '../../api/listings.api.js'
+import { getToken } from '../../auth/auth.js'
 
 boot()
 
@@ -8,17 +9,39 @@ const grid = document.getElementById('listings-grid')
 const empty = document.getElementById('empty-state')
 const form = document.getElementById('search-form')
 const createLink = document.getElementById('create-link')
-if (!currentUser()) createLink.classList.add('hidden')
+if (!getToken()) createLink.classList.add('hidden')
 
-function render(query) {
+async function render(query) {
   grid.innerHTML = ''
-  const items = listListings(query)
-  if (items.length === 0) {
+  empty.classList.add('hidden')
+  let items = []
+  try {
+    const params = { limit: 50, _bids: true, sort: 'created', sortOrder: 'desc' }
+    if (query) params.q = query
+    const data = await apiListListings(params)
+    items = data.data || data
+  } catch (e) {
     empty.classList.remove('hidden')
-  } else {
-    empty.classList.add('hidden')
-    items.forEach(l => grid.appendChild(renderListingCard(l)))
+    return
   }
+  if (!items || items.length === 0) {
+    empty.classList.remove('hidden')
+    return
+  }
+  items.forEach(l => {
+    // adapt API shape to card expectation if needed
+    const adapted = {
+      id: l.id,
+      title: l.title,
+      description: l.description,
+      media: (l.media || []).map(m => (typeof m === 'string' ? m : m.url)).filter(Boolean),
+      deadline: l.endsAt || l.deadline,
+      ownerName: l.seller?.name || l.ownerName || l.profile?.name,
+      highest: l._count?.bids ? (l.bids?.length ? Math.max(...l.bids.map(b => b.amount)) : 0) : l.highest || 0,
+      bids: l.bids || [],
+    }
+    grid.appendChild(renderListingCard(adapted))
+  })
 }
 
 render()

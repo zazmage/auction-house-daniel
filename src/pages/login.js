@@ -1,5 +1,4 @@
 import { boot } from '../main/boot.js'
-import { login as mockLogin } from '../mock/data.js'
 import { loginUser } from '../auth/auth.js'
 import { requireGuest } from '../auth/guard.js'
 
@@ -14,12 +13,7 @@ if (proceed) {
     const email = fd.get('email')
     const password = fd.get('password')
     try {
-      if (import.meta.env.VITE_API_BASE) {
-        await loginUser({ email, password })
-      } else {
-        const { error } = mockLogin(email, password)
-        if (error) throw new Error(error)
-      }
+      await loginUser({ email, password })
       const next = new URLSearchParams(location.search).get('next') || '/user/dashboard.html'
       location.href = next
     } catch (err) {

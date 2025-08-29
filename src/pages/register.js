@@ -1,5 +1,4 @@
 import { boot } from '../main/boot.js'
-import { register as mockRegister } from '../mock/data.js'
 import { registerUser } from '../auth/auth.js'
 import { requireGuest } from '../auth/guard.js'
 
@@ -15,12 +14,7 @@ if (proceedReg) {
     const msg = document.getElementById('register-msg')
     msg.textContent = ''
     try {
-      if (import.meta.env.VITE_API_BASE) {
-        await registerUser(payload)
-      } else {
-        const { error } = mockRegister(payload)
-        if (error) throw new Error(error)
-      }
+      await registerUser(payload)
       msg.textContent = 'Registered! Redirecting...'
       msg.className = 'text-sm text-green-600'
       setTimeout(() => (location.href = '/user/dashboard.html'), 800)

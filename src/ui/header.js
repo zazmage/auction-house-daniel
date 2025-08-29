@@ -1,7 +1,6 @@
 import headerTpl from './header.html?raw'
 import { userStore } from '../state/user.js'
 import { logoutUser, getProfile } from '../auth/auth.js'
-import { currentUser, logout as mockLogout } from '../mock/data.js'
 
 export function mountHeader(el) {
   el.innerHTML = headerTpl
@@ -9,8 +8,7 @@ export function mountHeader(el) {
   const guestEls = el.querySelectorAll('[data-guest]')
 
   function render(state) {
-    // Prefer real auth profile; fallback to mock currentUser during transition phase
-    const profile = state?.profile || getProfile() || currentUser()
+    const profile = state?.profile || getProfile()
     if (profile) {
       authEls.forEach(e => e.classList.remove('hidden'))
       guestEls.forEach(e => e.classList.add('hidden'))
@@ -25,9 +23,5 @@ export function mountHeader(el) {
 
   userStore.subscribe(render)
 
-  el.querySelector('#nav-logout')?.addEventListener('click', () => {
-    logoutUser()
-    try { mockLogout() } catch { }
-    location.href = '/index.html'
-  })
+  el.querySelector('#nav-logout')?.addEventListener('click', () => { logoutUser(); location.href = '/index.html' })
 }

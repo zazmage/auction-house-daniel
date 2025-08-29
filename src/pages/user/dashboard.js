@@ -14,9 +14,26 @@ if (!canProceed) {
   ; (async function init() {
     const token = getToken(); if (!token) return
     let user
-    try { const res = await apiGetProfile(getProfile()?.name || '', { _listings: true, _bids: true }); user = res.data || res } catch { }
-    document.getElementById('profile-name').textContent = user.name
-    document.getElementById('profile-email').textContent = user.email || user.email
+    const baseProfile = getProfile()
+    const profileName = baseProfile?.name || baseProfile?.data?.name || ''
+    try {
+      const res = await apiGetProfile(profileName, { _listings: true, _bids: true })
+      user = res.data || res
+    } catch (e) {
+      if (e.message === 'Not Found') {
+        console.warn('Profile not found on server; using local auth profile')
+      } else {
+        console.warn('Failed to load profile', e)
+      }
+    }
+    if (!user) {
+      document.getElementById('profile-name').textContent = 'Unknown'
+      document.getElementById('profile-email').textContent = ''
+      document.getElementById('profile-credits').textContent = '0'
+      return
+    }
+    document.getElementById('profile-name').textContent = user.name || profileName
+    document.getElementById('profile-email').textContent = user.email || baseProfile?.email || ''
     document.getElementById('profile-credits').textContent = user.credits
     if (user.avatar) document.getElementById('profile-avatar').src = user.avatar
     document.getElementById('profile-bio').value = user.bio || ''
@@ -25,7 +42,7 @@ if (!canProceed) {
       const bio = document.getElementById('profile-bio').value
       const msg = document.getElementById('profile-msg')
       try {
-        await apiUpdateProfile(user.name, { bio })
+        await apiUpdateProfile(user.name || profileName, { bio })
         msg.textContent = 'Saved'
         msg.className = 'text-xs text-green-600'
       } catch (err) {
@@ -37,7 +54,7 @@ if (!canProceed) {
     // Listings created
     const mineWrap = document.getElementById('my-listings')
     let mine = []
-    try { const r = await apiGetProfileListings(user.name, { _bids: true }); mine = (r.data || r) } catch { }
+    try { const r = await apiGetProfileListings(user.name || profileName, { _bids: true }); mine = (r.data || r) } catch { }
     if (mine.length === 0) document.getElementById('my-listings-empty').classList.remove('hidden')
     mine.forEach(l => {
       const adapted = {
@@ -55,7 +72,7 @@ if (!canProceed) {
     // Bids made
     const bidsList = document.getElementById('my-bids')
     let bids = []
-    try { const r = await apiGetProfileBids(user.name, { _listing: true }); bids = (r.data || r) } catch { }
+    try { const r = await apiGetProfileBids(user.name || profileName, { _listing: true }); bids = (r.data || r) } catch { }
     if (bids.length === 0) document.getElementById('my-bids-empty').classList.remove('hidden')
     bids.forEach(b => {
       const title = b.listing?.title || b.title || 'Listing'

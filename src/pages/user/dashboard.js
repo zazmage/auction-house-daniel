@@ -2,7 +2,7 @@ import { boot } from '../../main/boot.js'
 // mock usage removed
 import { renderListingCard } from '../../ui/listingCard.js'
 import { requireAuth } from '../../auth/guard.js'
-import { getProfile, getToken } from '../../auth/auth.js'
+import { getProfile, getToken, setSession } from '../../auth/auth.js'
 import { apiGetProfile, apiUpdateProfile, apiGetProfileListings, apiGetProfileBids } from '../../api/profiles.api.js'
 
 boot()
@@ -19,6 +19,11 @@ if (!canProceed) {
     try {
       const res = await apiGetProfile(profileName, { _listings: true, _bids: true })
       user = res.data || res
+      // persist refreshed credits/avatar/etc for navbar
+      const stored = getProfile()
+      if (stored && user?.credits != null) {
+        setSession(getToken(), { ...stored, ...user })
+      }
     } catch (e) {
       if (e.message === 'Not Found') {
         console.warn('Profile not found on server; using local auth profile')
@@ -35,14 +40,46 @@ if (!canProceed) {
     document.getElementById('profile-name').textContent = user.name || profileName
     document.getElementById('profile-email').textContent = user.email || baseProfile?.email || ''
     document.getElementById('profile-credits').textContent = user.credits
-    if (user.avatar) document.getElementById('profile-avatar').src = user.avatar
+    const avatarUrl = typeof user.avatar === 'string' ? user.avatar : user.avatar?.url
+    if (avatarUrl) document.getElementById('profile-avatar').src = avatarUrl
     document.getElementById('profile-bio').value = user.bio || ''
+    const bannerUrl = typeof user.banner === 'string' ? user.banner : user.banner?.url
+    if (bannerUrl) {
+      const bPrevWrap = document.getElementById('profile-banner-preview')
+      const bEl = document.getElementById('profile-banner')
+      bEl.src = bannerUrl
+      bPrevWrap.classList.remove('hidden')
+      document.getElementById('profile-banner-url').value = bannerUrl
+    }
+    if (avatarUrl) document.getElementById('profile-avatar-url').value = avatarUrl
 
+    document.getElementById('profile-avatar-url').addEventListener('input', e => {
+      const url = e.target.value.trim()
+      const img = document.getElementById('profile-avatar')
+      if (url) img.src = url
+    })
+    document.getElementById('profile-banner-url').addEventListener('input', e => {
+      const url = e.target.value.trim()
+      const wrap = document.getElementById('profile-banner-preview')
+      const img = document.getElementById('profile-banner')
+      if (url) { img.src = url; wrap.classList.remove('hidden') } else { wrap.classList.add('hidden') }
+    })
     document.getElementById('save-profile').addEventListener('click', async () => {
       const bio = document.getElementById('profile-bio').value
+      const avatarInput = document.getElementById('profile-avatar-url').value.trim()
+      const bannerInput = document.getElementById('profile-banner-url').value.trim()
       const msg = document.getElementById('profile-msg')
       try {
-        await apiUpdateProfile(user.name || profileName, { bio })
+        const payload = { bio }
+        if (avatarInput) payload.avatar = { url: avatarInput }
+        if (bannerInput) payload.banner = { url: bannerInput }
+        await apiUpdateProfile(user.name || profileName, payload)
+        // refresh profile from server to sync credits/avatar/banner
+        try {
+          const fresh = await apiGetProfile(user.name || profileName, { _listings: true, _bids: true })
+          const freshData = fresh.data || fresh
+          setSession(getToken(), { ...getProfile(), ...freshData })
+        } catch { }
         msg.textContent = 'Saved'
         msg.className = 'text-xs text-green-600'
       } catch (err) {
@@ -78,7 +115,11 @@ if (!canProceed) {
       const title = b.listing?.title || b.title || 'Listing'
       const highest = b.listing?.bids?.length ? Math.max(...b.listing.bids.map(x => x.amount)) : b.highest || 0
       const li = document.createElement('li')
-      li.textContent = `${title} (highest: ${highest} cr)`
+      const a = document.createElement('a')
+      a.href = `/listings/detail.html?id=${b.listing?.id || b.listingId || b.id}`
+      a.className = 'text-blue-600 hover:underline'
+      a.textContent = `${title} (highest: ${highest} cr)`
+      li.appendChild(a)
       bidsList.appendChild(li)
     })
   })()

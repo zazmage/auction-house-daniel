@@ -1,5 +1,5 @@
 import { boot } from '../../main/boot.js'
-import { getProfile, getToken } from '../../auth/auth.js'
+import { getProfile, getToken, setSession } from '../../auth/auth.js'
 import { apiGetListing, apiBidOnListing } from '../../api/listings.api.js'
 
 boot()
@@ -77,6 +77,19 @@ form?.addEventListener('submit', async e => {
   const amt = Number(fd.get('amount'))
   try {
     await apiBidOnListing(id, amt)
+    // After a successful bid, credits change on server; fetch own profile quietly to update header credits
+    try {
+      const current = getProfile()
+      if (current?.name) {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE || 'https://v2.api.noroff.dev'}/auction/profiles/${encodeURIComponent(current.name)}`, { headers: { Authorization: `Bearer ${getToken()}` } })
+        const pj = await res.json().catch(() => null)
+        if (res.ok && (pj?.data || pj)?.credits != null) {
+          const data = pj.data || pj
+          // retain token while updating stored profile
+          setSession(getToken(), { ...current, credits: data.credits })
+        }
+      }
+    } catch { }
     await load()
     bidMsg.textContent = 'Bid placed!'
     bidMsg.className = 'text-xs text-green-600'

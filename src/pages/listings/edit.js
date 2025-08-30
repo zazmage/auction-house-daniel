@@ -15,10 +15,13 @@ if (canEdit) {
   const errorEl = document.getElementById('edit-error')
   const msg = document.getElementById('edit-msg')
 
+  const currentProfileName = (await import('../../auth/auth.js')).getProfile()?.name
   if (!getToken()) {
     errorEl.textContent = 'Login required.'
   } else if (!listing) {
     errorEl.textContent = 'Listing not found.'
+  } else if (listing.seller?.name && listing.seller.name !== currentProfileName) {
+    errorEl.textContent = 'You do not own this listing.'
   } else {
     form.classList.remove('hidden')
     form.title.value = listing.title

@@ -13,8 +13,15 @@ if (proceedReg) {
     const payload = Object.fromEntries(fd.entries())
     const msg = document.getElementById('register-msg')
     msg.textContent = ''
+    if (payload.password !== payload.passwordConfirm) {
+      msg.textContent = 'Passwords do not match'
+      msg.className = 'text-sm text-red-600'
+      return
+    }
     try {
-      await registerUser(payload)
+      // Remove confirm field before API call
+      const { passwordConfirm, ...clean } = payload
+      await registerUser(clean)
       msg.textContent = 'Registered! Redirecting...'
       msg.className = 'text-sm text-green-600'
       setTimeout(() => (location.href = '/user/dashboard.html'), 800)

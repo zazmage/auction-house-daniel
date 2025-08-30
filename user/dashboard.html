@@ -14,16 +14,36 @@
     <section class="bg-white p-4 rounded shadow space-y-4" id="profile-section">
       <div class="flex gap-4 items-center">
         <img id="profile-avatar" class="w-20 h-20 rounded object-cover bg-gray-200" alt="avatar" />
-        <div>
-          <h1 id="profile-name" class="text-xl font-semibold"></h1>
-          <p id="profile-email" class="text-sm text-gray-600"></p>
-          <p class="text-sm"><strong>Credits:</strong> <span id="profile-credits"></span></p>
+        <div class="flex-1">
+          <div>
+            <h1 id="profile-name" class="text-xl font-semibold"></h1>
+            <p id="profile-email" class="text-sm text-gray-600"></p>
+            <p class="text-sm"><strong>Credits:</strong> <span id="profile-credits"></span></p>
+          </div>
         </div>
       </div>
       <div>
         <label class="block text-sm font-medium">Bio</label>
         <textarea id="profile-bio" rows="3" class="mt-1 w-full border rounded px-3 py-2"></textarea>
-        <button id="save-profile" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded">Save Bio (Mock)</button>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium">Avatar URL</label>
+            <input id="profile-avatar-url" type="url" placeholder="https://..."
+              class="mt-1 w-full border rounded px-3 py-2" />
+            <p class="text-[10px] text-gray-500 mt-1">Direct image link. Leave blank to keep current.</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Banner URL</label>
+            <input id="profile-banner-url" type="url" placeholder="https://..."
+              class="mt-1 w-full border rounded px-3 py-2" />
+            <p class="text-[10px] text-gray-500 mt-1">Optional wide image displayed above your profile.</p>
+          </div>
+        </div>
+        <div id="profile-banner-preview" class="mt-4 hidden">
+          <p class="text-xs font-medium text-gray-600 mb-1">Banner Preview</p>
+          <img id="profile-banner" class="w-full max-h-40 object-cover rounded bg-gray-200" alt="banner" />
+        </div>
+        <button id="save-profile" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded">Save Bio</button>
         <p id="profile-msg" class="text-xs"></p>
       </div>
     </section>

@@ -23,5 +23,33 @@ export function mountHeader(el) {
 
   userStore.subscribe(render)
 
-  el.querySelector('#nav-logout')?.addEventListener('click', () => { logoutUser(); location.href = '/index.html' })
+  el.querySelector('#nav-logout')?.addEventListener('click', () => { logoutUser(); location.href = '/' })
+
+  // Mobile toggle
+  const toggleBtn = el.querySelector('#nav-toggle')
+  const menu = el.querySelector('#nav-menu')
+  if (toggleBtn && menu) {
+    toggleBtn.addEventListener('click', () => {
+      const open = menu.classList.toggle('hidden') === false
+      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false')
+      if (open) {
+        menu.classList.add('animate-in')
+      }
+    })
+    // Close on nav link click (mobile)
+    menu.querySelectorAll('a,button').forEach(item => item.addEventListener('click', () => {
+      if (window.innerWidth < 768) {
+        menu.classList.add('hidden')
+        toggleBtn.setAttribute('aria-expanded', 'false')
+      }
+    }))
+    // Close on outside click
+    document.addEventListener('click', e => {
+      if (window.innerWidth >= 768) return
+      if (!menu.contains(e.target) && !toggleBtn.contains(e.target)) {
+        menu.classList.add('hidden')
+        toggleBtn.setAttribute('aria-expanded', 'false')
+      }
+    })
+  }
 }

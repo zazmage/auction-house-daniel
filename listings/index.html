@@ -9,16 +9,45 @@
 </head>
 
 <body class="min-h-screen flex flex-col bg-gray-50">
-  <header id="site-header" class="border-b bg-white"></header>
+  <header id="site-header"></header>
   <main class="flex-1 max-w-6xl mx-auto w-full p-4 space-y-6" id="page-root">
-    <h1 class="text-2xl font-semibold">All Listings</h1>
-    <form id="search-form" class="flex gap-2 flex-wrap items-center">
-      <input name="q" class="flex-1 border rounded px-3 py-2" placeholder="Search title..." />
-      <button class="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
-      <a href="/listings/create.html" class="ml-auto bg-green-600 text-white px-4 py-2 rounded" id="create-link">Create
-        Listing</a>
+    <form id="search-form" class="grid gap-4 md:grid-cols-4 items-end bg-white p-5 rounded-[15px] shadow">
+      <div class="md:col-span-1">
+        <label class="block text-xs font-semibold tracking-wide text-gray-600 mb-1">Search by title</label>
+        <input name="q" class="w-full border rounded px-3 py-2" placeholder="Search by title..." />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-semibold tracking-wide text-gray-600 mb-1">Filter by tags</label>
+        <input name="tags" class="w-full border rounded px-3 py-2" placeholder="Enter tags (comma separated)" />
+      </div>
+      <div class="flex items-center gap-3 md:col-span-1 mt-2 md:mt-0">
+        <label class="relative inline-flex items-center cursor-pointer select-none group">
+          <input id="active-only" name="active" type="checkbox" class="sr-only peer" />
+          <span
+            class="w-12 h-6 rounded-full bg-gray-300 peer-checked:bg-[var(--color-primary)] transition-colors flex items-center p-0.5 peer-checked:justify-end">
+            <span class="w-5 h-5 bg-white rounded-full shadow-sm transition-all"></span>
+          </span>
+        </label>
+        <label for="active-only" class="text-xs font-semibold tracking-wide text-gray-600">Show active listings
+          only</label>
+      </div>
+      <div class="md:col-span-4 flex gap-3 justify-end flex-wrap pt-2">
+        <button
+          class="px-5 py-2 rounded-[12px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-sm font-semibold shadow-sm cursor-pointer">Apply</button>
+        <button type="button" id="clear-filters"
+          class="px-5 py-2 rounded-[12px] bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-semibold shadow-sm cursor-pointer">Clear</button>
+        <a href="/listings/create/"
+          class="px-5 py-2 rounded-[12px] bg-green-600 hover:bg-green-700 text-white text-sm font-semibold shadow-sm"
+          id="create-link">Create Listing</a>
+      </div>
     </form>
     <div id="listings-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    <!-- Separator image injected after first 6 items; secondary grid created dynamically below -->
+    <div id="separator-slot" class="w-full">
+      <img id="start-bidding-separator" src="/start-bidding-now.png" alt="Start bidding now"
+        class="w-full rounded-[20px] shadow-lg ring-1 ring-black/5" />
+    </div>
+    <div id="infinite-sentinel" class="h-10"></div>
     <div id="empty-state" class="hidden text-gray-500 text-sm">No listings found.</div>
   </main>
   <footer id="site-footer" class="mt-8"></footer>

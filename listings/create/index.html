@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Create Listing</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header"></header>
+  <main id="page-root" class="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 space-y-8">
+    <div class="space-y-2">
+      <h1 class="text-2xl font-semibold tracking-tight">Create Listing</h1>
+      <p class="text-sm text-gray-600">Add a new item for bidding. Provide clear images and a detailed description.</p>
+    </div>
+    <form id="create-form" class="space-y-6 bg-white rounded-[15px] shadow p-6">
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium">Title <span class="text-red-500">*</span></label>
+          <input name="title" required
+            class="mt-1 w-full border rounded-[12px] px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-light)]" />
+        </div>
+        <div class="space-y-2">
+          <label class="block text-sm font-medium">Deadline <span class="text-red-500">*</span></label>
+          <input name="deadline" type="datetime-local" required
+            class="mt-1 w-full border rounded-[12px] px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-light)]" />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label class="block text-sm font-medium">Images (comma separated URLs)</label>
+        <textarea name="media" rows="2"
+          class="mt-1 w-full border rounded-[12px] px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-light)]"
+          placeholder="https://image1.jpg, https://image2.png"></textarea>
+        <p class="text-[11px] text-gray-500">Provide direct, publicly accessible image URLs. First becomes cover.</p>
+      </div>
+      <div class="space-y-2 md:col-span-2">
+        <label class="block text-sm font-medium">Tags (comma separated)</label>
+        <input name="tags" type="text"
+          class="mt-1 w-full border rounded-[12px] px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-light)]"
+          placeholder="art, vintage, rare" />
+        <p class="text-[11px] text-gray-500">Optional. Used for filtering listings.</p>
+      </div>
+      <div class="space-y-2">
+        <label class="block text-sm font-medium">Description</label>
+        <textarea name="description" rows="4"
+          class="mt-1 w-full border rounded-[12px] px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-light)]"
+          placeholder="Describe the item, condition, etc."></textarea>
+      </div>
+      <button
+        class="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:bg-[var(--color-primary-disabled)] text-white font-semibold rounded-[15px] py-3 transition cursor-pointer">Create
+        Listing</button>
+      <p id="create-msg" class="text-sm font-medium"></p>
+    </form>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/listings/create.js"></script>
+</body>
+
+</html>

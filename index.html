@@ -11,15 +11,27 @@
 </head>
 
 <body class="min-h-full flex flex-col bg-gray-50 text-gray-900">
-  <header id="site-header" class="border-b bg-white"></header>
-  <main class="flex-1 max-w-5xl mx-auto w-full p-4 space-y-6" id="page-root">
-    <section>
-      <h1 class="text-2xl font-bold mb-2">Welcome to the Auction House</h1>
-      <p class="text-sm text-gray-600">Browse current listings or sign in to create and bid.</p>
+  <header id="site-header"></header>
+  <main class="flex-1 max-w-6xl mx-auto w-full p-4 md:p-6 space-y-12" id="page-root">
+    <section class="text-center pt-4">
+      <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">Welcome to the Auction House</h1>
     </section>
-    <section>
-      <h2 class="text-xl font-semibold mb-2">Featured Listings</h2>
-      <div id="featured-listings" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Featured Listings</h2>
+      <div id="featured-listings" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+    <section class="space-y-4" id="active-bids-section">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <h2 class="text-2xl font-semibold">Your Active Bids</h2>
+        <p id="active-bids-status" class="text-sm text-gray-600"></p>
+      </div>
+      <div id="active-bids-cta" class="hidden bg-white border rounded-[15px] p-6 items-center text-center gap-4">
+        <p class="text-sm text-gray-600">Login to track items you're currently bidding on and never miss a win.</p>
+        <a href="/login"
+          class="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-[12px] px-5 py-2 shadow text-sm">Go
+          to Login</a>
+      </div>
+      <div id="active-bids" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
     </section>
   </main>
   <footer id="site-footer" class="mt-8"></footer>

@@ -1,6 +1,7 @@
 import { boot } from '../../main/boot.js'
 import { getProfile, getToken, setSession } from '../../auth/auth.js'
 import { apiGetListing, apiBidOnListing } from '../../api/listings.api.js'
+import { apiGetProfile } from '../../api/profiles.api.js'
 
 boot()
 
@@ -9,6 +10,7 @@ const id = params.get('id')
 let currentListing
 const form = document.getElementById('bid-form')
 const bidMsg = document.getElementById('bid-msg')
+const loginCta = document.getElementById('login-cta')
 
 async function load() {
   document.getElementById('listing-detail').classList.add('opacity-50')
@@ -67,8 +69,23 @@ function render() {
     history.appendChild(li)
   })
   const cu = getProfile()
-  if (!cu || cu.name === listing.ownerName) form.classList.add('hidden')
-  else form.classList.remove('hidden')
+  // Visibility rules:
+  // 1. Not logged in -> show login CTA, hide bid form
+  // 2. Logged in & owner -> hide both (can't bid on own listing)
+  // 3. Logged in & not owner -> show bid form, hide login CTA
+  if (!cu) {
+    form.classList.add('hidden')
+    if (loginCta) {
+      loginCta.classList.remove('hidden')
+      loginCta.classList.add('flex')
+    }
+  } else if (cu.name === listing.ownerName) {
+    form.classList.add('hidden')
+    if (loginCta) loginCta.classList.add('hidden')
+  } else {
+    form.classList.remove('hidden')
+    if (loginCta) loginCta.classList.add('hidden')
+  }
 }
 
 form?.addEventListener('submit', async e => {
@@ -81,15 +98,11 @@ form?.addEventListener('submit', async e => {
     try {
       const current = getProfile()
       if (current?.name) {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE || 'https://v2.api.noroff.dev'}/auction/profiles/${encodeURIComponent(current.name)}`, { headers: { Authorization: `Bearer ${getToken()}` } })
-        const pj = await res.json().catch(() => null)
-        if (res.ok && (pj?.data || pj)?.credits != null) {
-          const data = pj.data || pj
-          // retain token while updating stored profile
-          setSession(getToken(), { ...current, credits: data.credits })
-        }
+        const fresh = await apiGetProfile(current.name)
+        const data = fresh.data || fresh
+        if (data?.credits != null) setSession(getToken(), { ...current, credits: data.credits })
       }
-    } catch { }
+    } catch { /* ignore refresh errors */ }
     await load()
     bidMsg.textContent = 'Bid placed!'
     bidMsg.className = 'text-xs text-green-600'

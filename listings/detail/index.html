@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Listing Detail</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header"></header>
+  <main id="page-root" class="flex-1 max-w-5xl mx-auto w-full p-4 md:p-6 space-y-8">
+    <a href="/listings/"
+      class="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline">&larr; Back
+      to Listings</a>
+    <article id="listing-detail" class="bg-white rounded-[15px] shadow p-6 space-y-6">
+      <header class="space-y-2">
+        <h1 id="detail-title" class="text-3xl font-semibold tracking-tight"></h1>
+        <p id="detail-description" class="text-sm text-gray-700"></p>
+      </header>
+      <div id="detail-media" class="flex gap-3 flex-wrap"></div>
+      <div class="grid sm:grid-cols-3 gap-4 text-sm">
+        <p><span class="font-semibold text-gray-800">Deadline:</span> <span id="detail-deadline"></span></p>
+        <p><span class="font-semibold text-gray-800">Owner:</span> <span id="detail-owner"></span></p>
+        <p><span class="font-semibold text-gray-800">Highest Bid:</span> <span id="detail-highest"></span></p>
+      </div>
+      <section class="space-y-3">
+        <h2 class="text-lg font-semibold">Bid History</h2>
+        <ul id="bid-history" class="text-sm list-disc pl-5 space-y-1"></ul>
+      </section>
+      <div id="login-cta" class="hidden bg-white border rounded-[12px] p-5 flex-col items-center text-center gap-3">
+        <p class="text-sm text-gray-600">Login to place a bid on this item and track your activity.</p>
+        <a href="/login/"
+          class="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-[12px] px-5 py-2 shadow text-sm">Go
+          to Login</a>
+      </div>
+      <form id="bid-form" class="space-y-4 bg-gray-50 border rounded-[12px] p-4">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium">Your Bid (credits)</label>
+          <input name="amount" type="number" min="1" required
+            class="w-full border rounded-[10px] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-light)]" />
+        </div>
+        <button
+          class="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:bg-[var(--color-primary-disabled)] text-white font-semibold rounded-[12px] py-3 transition cursor-pointer">Place
+          Bid</button>
+        <p id="bid-msg" class="text-xs font-medium"></p>
+      </form>
+    </article>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/listings/detail.js"></script>
+</body>
+
+</html>

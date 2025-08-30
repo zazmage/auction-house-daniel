@@ -6,6 +6,10 @@ export function apiListListings(params = {}) {
   const qs = new URLSearchParams(params).toString()
   return http.get(BASE_PATH + (qs ? `?${qs}` : ''))
 }
+export function apiSearchListings(query, params = {}) {
+  const qsObj = new URLSearchParams({ q: query, ...params })
+  return http.get(`${BASE_PATH}/search?${qsObj.toString()}`)
+}
 export function apiGetListing(id, params = {}) {
   const qs = new URLSearchParams(params).toString()
   return http.get(`${BASE_PATH}/${id}` + (qs ? `?${qs}` : ''))

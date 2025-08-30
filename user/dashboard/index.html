@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Auction House | Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/src/styles/tailwind.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header id="site-header"></header>
+  <main id="page-root" class="flex-1 max-w-6xl mx-auto w-full p-4 md:p-6 space-y-10">
+    <section class="bg-white rounded-[15px] shadow p-6 space-y-6">
+      <img id="profile-banner" class="hidden w-full max-h-64 object-cover rounded-[12px]" alt="banner" />
+      <header class="flex flex-col sm:flex-row sm:items-center gap-6">
+        <img id="profile-avatar" src="/avatar-fallback.png" alt="avatar"
+          class="w-28 h-28 rounded-full object-cover ring-4 ring-white shadow-md" />
+        <div class="flex-1 space-y-2">
+          <h1 class="text-3xl font-semibold tracking-tight" id="profile-name">Loading...</h1>
+          <p class="text-sm text-gray-600" id="profile-email"></p>
+          <p class="text-sm text-gray-600">Credits: <span id="profile-credits">0</span></p>
+        </div>
+      </header>
+      <div class="space-y-4">
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium">Avatar URL</label>
+            <input id="profile-avatar-url" class="w-full border rounded px-3 py-2" placeholder="https://..." />
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-medium">Banner URL</label>
+            <input id="profile-banner-url" class="w-full border rounded px-3 py-2" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="block text-sm font-medium">Bio</label>
+          <textarea id="profile-bio" rows="3" class="w-full border rounded px-3 py-2"></textarea>
+        </div>
+        <div>
+          <button id="save-profile"
+            class="px-6 py-2 rounded-[12px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold shadow cursor-pointer">Save
+            Profile</button>
+          <p id="profile-msg" class="text-xs mt-2"></p>
+        </div>
+
+      </div>
+    </section>
+    <section class="space-y-4">
+      <div class="flex items-center gap-3 flex-wrap">
+        <button
+          class="dash-tab px-5 py-2 rounded-[12px] bg-[var(--color-primary)] text-white text-sm font-semibold shadow cursor-pointer"
+          data-tab="listings" aria-selected="true">My Listings</button>
+        <button
+          class="dash-tab px-5 py-2 rounded-[12px] bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold shadow cursor-pointer"
+          data-tab="bids" aria-selected="false">My Bids</button>
+        <button
+          class="dash-tab px-5 py-2 rounded-[12px] bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold shadow cursor-pointer"
+          data-tab="wins" aria-selected="false">Wins</button>
+      </div>
+      <div id="tab-panels" class="space-y-8">
+        <div id="tab-listings" class="space-y-5" role="tabpanel"></div>
+        <div id="tab-bids" class="space-y-5 hidden" role="tabpanel"></div>
+        <div id="tab-wins" class="space-y-5 hidden" role="tabpanel"></div>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer" class="mt-8"></footer>
+  <script type="module" src="/src/pages/user/dashboard.js"></script>
+</body>
+
+</html>

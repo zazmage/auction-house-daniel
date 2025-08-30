@@ -1,14 +1,49 @@
 <template>
-  <a class="block bg-white border rounded shadow hover:shadow-md transition overflow-hidden group">
-    <div class="aspect-video bg-gray-100 flex items-center justify-center relative">
-      <img data-ref="image" alt="" class="absolute inset-0 w-full h-full object-cover hidden" />
-      <span data-ref="no-image" class="text-xs text-gray-500">No Image</span>
+  <div class="bg-white border rounded-[15px] shadow-sm hover:shadow transition flex flex-col overflow-hidden">
+    <div class="relative group">
+      <div class="aspect-[4/3] bg-gray-100 overflow-hidden rounded-t-[15px]">
+        <img data-ref="image" alt="" class="w-full h-full object-cover hidden group-hover:scale-105 transition" />
+        <div data-ref="no-image" class="w-full h-full flex items-center justify-center text-xs text-gray-500">No Image
+        </div>
+      </div>
+      <div class="absolute top-2 left-2 flex flex-col gap-1">
+        <span class="px-2 py-0.5 text-[10px] font-medium rounded-full bg-black/80 text-white" data-ref="bids-badge">0
+          bids</span>
+      </div>
+      <div class="absolute bottom-2 left-2">
+        <div class="px-2 py-1 rounded bg-black/80 text-white">
+          <p class="text-[10px] leading-tight" data-ref="ends-line1">Ends: --</p>
+          <p class="text-[10px] leading-tight text-[var(--color-primary)]" data-ref="ends-line2"></p>
+        </div>
+      </div>
+      <span class="absolute bottom-2 right-2 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-black/80 text-white"
+        data-ref="credits-badge">0 credits</span>
     </div>
-    <div class="p-3 space-y-1">
-      <h3 class="font-medium text-sm line-clamp-2" data-ref="title"></h3>
-      <p class="text-xs text-gray-500">Bids: <span data-ref="bids">0</span> • Highest: <span data-ref="highest">0</span>
-      </p>
-      <p class="text-[10px] text-gray-400">Ends: <span data-ref="deadline"></span></p>
+    <div class="flex-1 flex flex-col p-4 gap-3">
+      <div>
+        <h3 class="text-base font-semibold leading-snug mb-1" data-ref="title"></h3>
+        <div class="flex flex-wrap items-start gap-2 text-[11px] text-gray-600">
+          <span data-ref="seller" class="font-medium"></span>
+          <div data-ref="tags" class="flex flex-wrap gap-1 max-h-10 overflow-y-auto pr-1 scrollbar-thin"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1" data-ref="posted"></p>
+      </div>
+      <p class="text-sm text-gray-700 leading-snug line-clamp-3" data-ref="description"></p>
+      <div class="mt-2">
+        <p class="text-[11px] font-medium mb-1">Recent Bids:</p>
+        <ul data-ref="recent-bids" class="space-y-0.5 text-[11px] text-gray-600"></ul>
+        <p data-ref="no-bids" class="text-[11px] text-gray-400 italic">No Bids yet</p>
+      </div>
+      <div data-ref="login-prompt"
+        class="hidden items-start gap-2 border-l-2 border-orange-400 pl-2 text-[11px] text-gray-600">
+        <span> Please <a href="/register/" class="text-orange-500 hover:underline">register</a> or <a href="/login/"
+            class="text-orange-500 hover:underline">login</a> to place bids</span>
+      </div>
+      <div class="pt-2 mt-auto">
+        <a data-ref="details-link"
+          class="block text-center w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:bg-[var(--color-primary-disabled)] text-white font-semibold italic rounded-[15px] py-2 shadow-sm transition text-sm">View
+          Details</a>
+      </div>
     </div>
-  </a>
+  </div>
 </template>

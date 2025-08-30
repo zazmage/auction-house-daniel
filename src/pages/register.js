@@ -24,7 +24,7 @@ if (proceedReg) {
       await registerUser(clean)
       msg.textContent = 'Registered! Redirecting...'
       msg.className = 'text-sm text-green-600'
-      setTimeout(() => (location.href = '/user/dashboard.html'), 800)
+      setTimeout(() => (location.href = '/user/dashboard'), 800)
     } catch (err) {
       msg.textContent = err.message || 'Registration failed'
       msg.className = 'text-sm text-red-600'

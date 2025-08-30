@@ -1,0 +1,29 @@
+<template>
+  <div class="bg-white border rounded-[15px] shadow-sm flex flex-col overflow-hidden">
+    <div class="relative">
+      <div class="aspect-[4/3] bg-gray-100 overflow-hidden">
+        <img data-ref="image" alt="" class="w-full h-full object-cover hidden" />
+        <div data-ref="no-image" class="w-full h-full flex items-center justify-center text-xs text-gray-500">No Image
+        </div>
+      </div>
+      <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/70 text-white text-[10px] font-medium"
+        data-ref="bids-badge"></div>
+      <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px]" data-ref="ends">
+      </div>
+    </div>
+    <div class="p-4 flex flex-col gap-3 flex-1">
+      <h3 class="text-base font-semibold leading-snug" data-ref="title"></h3>
+      <p class="text-[11px] text-gray-500" data-ref="posted"></p>
+      <p class="text-sm text-gray-700 leading-snug line-clamp-3" data-ref="description"></p>
+      <div data-ref="tags" class="flex flex-wrap gap-1"></div>
+      <div class="mt-auto flex gap-2 pt-2">
+        <a data-ref="details"
+          class="px-3 py-1.5 rounded-[10px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold shadow-sm">Details</a>
+        <a data-ref="edit"
+          class="px-3 py-1.5 rounded-[10px] bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-semibold shadow-sm">Edit</a>
+        <button type="button" data-ref="delete"
+          class="px-3 py-1.5 rounded-[10px] bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-sm cursor-pointer">Delete</button>
+      </div>
+    </div>
+  </div>
+</template>

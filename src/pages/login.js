@@ -14,7 +14,7 @@ if (proceed) {
     const password = fd.get('password')
     try {
       await loginUser({ email, password })
-      const next = new URLSearchParams(location.search).get('next') || '/user/dashboard.html'
+      const next = new URLSearchParams(location.search).get('next') || '/user/dashboard'
       location.href = next
     } catch (err) {
       alert(err.message || 'Login failed')

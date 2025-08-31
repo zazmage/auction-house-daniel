@@ -17,14 +17,16 @@ let secondaryGrid // added for post-separator listings
 if (!getToken()) createLink.classList.add('hidden')
 
 // State
-let cache = [] // full fetched so far for current filters
-let page = 1 // Noroff API pages are 1-based
+let cache = [] // accumulated listings for current filters
+let page = 1 // page-based pagination (Noroff API uses page + limit)
+let totalAvailable = null // track total from API meta
 let loading = false
 let done = false
 let appliedQuery = ''
-let appliedTags = []
+let appliedTags = [] // lowercase
 let appliedActiveOnly = false
-const SERVER_PAGE_SIZE = 50 // server fetch batch (max default 100 allowed; 50 keeps payload reasonable)
+let endMarkerAdded = false
+const SERVER_PAGE_SIZE = 50 // server fetch batch size
 const VISUAL_CHUNK = 12 // show 12 per scroll cycle (6 + separator + 6)
 
 function adapt(l) {
@@ -46,6 +48,7 @@ function applyClientFilters(items) {
   return items.filter(l => {
     if (appliedTags.length) {
       const lt = (l.tags || []).map(t => t.toLowerCase())
+      // intersection: every requested tag must exist in listing tags
       if (!appliedTags.every(t => lt.includes(t))) return false
     }
     if (appliedActiveOnly) {
@@ -56,7 +59,7 @@ function applyClientFilters(items) {
 }
 
 function renderNextChunk() {
-  const already = grid.querySelectorAll('[data-listing-card]').length
+  const already = document.querySelectorAll('[data-listing-card]').length
   // Determine which slice to show next
   const filtered = applyClientFilters(cache)
   if (already >= filtered.length) return
@@ -84,35 +87,47 @@ function renderNextChunk() {
       grid.appendChild(card)
     }
   })
-  if (already + nextSlice.length >= applyClientFilters(cache).length && done) {
-    // All displayed
+  if (already + nextSlice.length >= applyClientFilters(cache).length && done && !endMarkerAdded) {
     sentinel.classList.add('opacity-0')
+    const endNote = document.createElement('p')
+    endNote.className = 'text-center text-xs text-gray-500 mt-8'
+    endNote.textContent = 'No more listings.'
+    sentinel.parentElement.appendChild(endNote)
+    endMarkerAdded = true
   }
 }
 
 async function fetchMoreIfNeeded() {
   if (loading || done) return
-  // If we already have enough cached to render another chunk, skip fetch
+  // If we already have enough cached (not yet rendered visually), skip fetch
   const filtered = applyClientFilters(cache)
-  const already = grid.querySelectorAll('[data-listing-card]').length
-  if (already < filtered.length) return
+  const alreadyRendered = document.querySelectorAll('[data-listing-card]').length
+  if (alreadyRendered < filtered.length) return
+  if (totalAvailable != null && cache.length >= totalAvailable) { done = true; return }
   loading = true
   try {
-    const baseParams = { limit: SERVER_PAGE_SIZE, _bids: true, sort: 'created', sortOrder: 'desc', page }
-    // API supports _active and _tag for filtering; use them so server returns leaner dataset
+    const baseParams = { limit: SERVER_PAGE_SIZE, page, _bids: true, sort: 'created', sortOrder: 'desc' }
     if (appliedActiveOnly) baseParams._active = true
-    if (appliedTags.length === 1) baseParams._tag = appliedTags[0] // only one supported by API
-    // When query present, use search endpoint; it returns same shape (data + meta)
-    const data = appliedQuery
+    // Server only supports one _tag; if multiple selected we still send first to reduce payload
+    if (appliedTags.length >= 1) baseParams._tag = appliedTags[0]
+    const res = appliedQuery
       ? await apiSearchListings(appliedQuery, baseParams)
       : await apiListListings(baseParams)
-    const items = (data.data || data) || []
-    if (items.length === 0) {
+    const meta = res.meta || res.data?.meta || null
+    if (meta && meta.total != null) totalAvailable = meta.total
+    // Some responses wrap list in data property, others may already be array
+    let items = Array.isArray(res) ? res : (res.data && Array.isArray(res.data) ? res.data : (Array.isArray(res.data?.data) ? res.data.data : (res.data || res)))
+    if (!Array.isArray(items)) items = []
+    // Deduplicate by id to prevent looping over first page again
+    const existingIds = new Set(cache.map(i => i.id))
+    const fresh = items.filter(i => !existingIds.has(i.id))
+    if (!fresh.length) {
       done = true
     } else {
-      cache = cache.concat(items)
+      cache = cache.concat(fresh)
       page += 1
     }
+    if (totalAvailable != null && cache.length >= totalAvailable) done = true
   } catch (e) {
     console.warn('Listing fetch failed', e.message)
     done = true
@@ -121,18 +136,31 @@ async function fetchMoreIfNeeded() {
   }
 }
 
+function updateUrlState() {
+  const params = new URLSearchParams()
+  if (appliedQuery) params.set('q', appliedQuery)
+  if (appliedTags.length) params.set('tags', appliedTags.join(','))
+  if (appliedActiveOnly) params.set('active', '1')
+  const newUrl = location.pathname + (params.toString() ? '?' + params.toString() : '')
+  history.replaceState(null, '', newUrl)
+}
+
 async function resetAndLoad(q = '', tagsArr = [], activeOnly = false) {
   appliedQuery = q
   appliedTags = tagsArr
   appliedActiveOnly = activeOnly
   page = 1
+  totalAvailable = null
   cache = []
   done = false
+  endMarkerAdded = false
   grid.innerHTML = ''
+  if (secondaryGrid) { secondaryGrid.remove(); secondaryGrid = null }
   separatorSlot?.classList.add('hidden')
   empty.classList.add('hidden')
+  updateUrlState()
   await fetchMoreIfNeeded()
-  if (cache.length === 0) { empty.classList.remove('hidden'); return }
+  if (!cache.length) { empty.classList.remove('hidden'); return }
   renderNextChunk()
 }
 
@@ -147,19 +175,35 @@ const io = new IntersectionObserver(async (entries) => {
 }, { rootMargin: '200px' })
 if (sentinel) io.observe(sentinel)
 
-resetAndLoad()
+  // Initialize from URL (deep-linkable filters)
+  ; (() => {
+    const params = new URLSearchParams(location.search)
+    const q = params.get('q')?.trim() || ''
+    const tags = (params.get('tags') || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
+    const active = params.get('active') === '1'
+    if (form) {
+      if (q) form.q.value = q
+      if (tags.length) form.tags.value = tags.join(', ')
+      if (active) form.active.checked = true
+    }
+    resetAndLoad(q, tags, active)
+  })()
 
+// Debounced search submit to reduce rapid refetching
+let searchDebounce
 form?.addEventListener('submit', e => {
   e.preventDefault()
   const fd = new FormData(form)
-  const q = fd.get('q')?.trim()
-  const tagsRaw = fd.get('tags')?.trim() || ''
+  const q = (fd.get('q') || '').toString().trim()
+  const tagsRaw = (fd.get('tags') || '').toString().trim()
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : []
   const activeOnly = fd.get('active') === 'on'
-  resetAndLoad(q, tags, activeOnly)
+  clearTimeout(searchDebounce)
+  searchDebounce = setTimeout(() => resetAndLoad(q, tags, activeOnly), 150)
 })
 
 clearBtn?.addEventListener('click', () => {
+  if (!form) return
   form.q.value = ''
   form.tags.value = ''
   form.active.checked = false

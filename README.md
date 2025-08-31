@@ -2,6 +2,9 @@
 
 A modern, responsive multi‑page Auction platform built with **Vite**, **vanilla ES Modules**, and **Tailwind CSS** consuming the **Noroff API v2 Auction House** endpoints. No front‑end frameworks (React/Vue/etc.) are used, complying with project technical restrictions.
 
+## Deployment
+Live application: https://auction-house-daniel.vercel.app/
+
 ## Features
 - Public browsing & search of listings (keyword + tag filtering, active-only toggle, infinite scroll)
 - Registration & login restricted to `@stud.noroff.no` emails

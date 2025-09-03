@@ -28,8 +28,9 @@ Live application:
 
 ## Project Structure
 ```
-index.html
-login/ register/ listings/ user/dashboard/  (directory-based pages)
+index.html  (main listings browsing, search, filters, infinite scroll)
+login/ register/ user/dashboard/  (directory-based pages)
+listings/ (redirect stub + nested detail/create/edit routes)
 public/ favicon.svg vite.svg
 src/
   api/ (HTTP + endpoint wrappers)
@@ -54,7 +55,7 @@ npm install
 ```
 npm run dev
 ```
-Visit the printed local URL (usually http://localhost:5173/). Pages are accessible via clean trailing-slash paths, e.g. `/` (listings), `/login/`.
+Visit the printed local URL (usually http://localhost:5173/). The root path `/` now serves the listings page (formerly `/listings/`). Nested routes like `/listings/detail/?id=...`, `/listings/create/`, `/listings/edit/?id=...` remain under the `listings/` directory. Auth pages stay at `/login/` and `/register/`.
 
 ### Build
 ```

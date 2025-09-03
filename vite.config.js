@@ -8,10 +8,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        home: resolve(__dirname, 'index.html'),
+        root: resolve(__dirname, 'index.html'), // listings landing now at /
         login: resolve(__dirname, 'login/index.html'),
         register: resolve(__dirname, 'register/index.html'),
-        listings: resolve(__dirname, 'listings/index.html'),
         listingDetail: resolve(__dirname, 'listings/detail/index.html'),
         listingCreate: resolve(__dirname, 'listings/create/index.html'),
         listingEdit: resolve(__dirname, 'listings/edit/index.html'),

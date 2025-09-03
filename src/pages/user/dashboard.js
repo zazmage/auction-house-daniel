@@ -113,34 +113,65 @@ if (!canProceed) {
 
     if (!Array.isArray(myBids)) myBids = []
 
-    // If listings not embedded, fetch missing listing details (limit to 10 to avoid overload)
-    const missingListingIds = Array.from(new Set(myBids.filter(b => !b.listing && !b.listings?.length && (b.listingId || b.listingID || b.listing_id)).map(b => b.listingId || b.listingID || b.listing_id))).slice(0, 10)
+    // If listings not embedded, fetch missing listing details (fetch all unique to ensure accurate wins)
+    const missingListingIds = Array.from(new Set(myBids
+      .filter(b => !b.listing && !b.listings?.length && (b.listingId || b.listingID || b.listing_id))
+      .map(b => b.listingId || b.listingID || b.listing_id)))
     const fetchedMap = new Map()
     for (const lid of missingListingIds) {
-      try { const res = await apiGetListing(lid, { _bids: true, _seller: true }); fetchedMap.set(lid, res.data || res) } catch { }
+      try {
+        const res = await apiGetListing(lid, { _bids: true, _seller: true })
+        fetchedMap.set(lid, res.data || res)
+      } catch (e) { /* ignore individual fetch errors */ }
+    }
+    // Also fetch listings that are embedded but lack bids array so we can evaluate wins correctly
+    const embeddedMissingBidsIds = Array.from(new Set(myBids
+      .filter(b => b.listing && (!Array.isArray(b.listing.bids) || b.listing.bids.length === 0))
+      .map(b => b.listing.id)))
+      .filter(id => !fetchedMap.has(id))
+    for (const lid of embeddedMissingBidsIds) {
+      try {
+        const res = await apiGetListing(lid, { _bids: true, _seller: true })
+        fetchedMap.set(lid, res.data || res)
+      } catch { }
     }
     myBids.forEach(b => {
-      if (!b.listing && fetchedMap.size) {
+      if (!b.listing) {
         const lid = b.listingId || b.listingID || b.listing_id
         if (lid && fetchedMap.has(lid)) b.listing = fetchedMap.get(lid)
+        else if (b.listings?.length) b.listing = b.listings[0]
+      } else if (!Array.isArray(b.listing.bids) || b.listing.bids.length === 0) {
+        // Replace shallow listing with fetched version if available
+        if (fetchedMap.has(b.listing.id)) b.listing = fetchedMap.get(b.listing.id)
       }
-      if (!b.listing && b.listings?.length) b.listing = b.listings[0]
     })
 
-    // Compute wins (listings ended where highest bidder is user)
+    // Compute wins: listing ended AND highest bid belongs to current user
     const now = Date.now()
     const winsMap = new Map()
     myBids.forEach(b => {
       const listing = b.listing
       if (!listing) return
-      const ends = new Date(listing.endsAt || listing.deadline || listing.ends_at).getTime()
-      if (isNaN(ends) || ends > now) return // not ended yet
-      const highest = listing.bids?.length ? listing.bids.reduce((m, x) => x.amount > m.amount ? x : m, listing.bids[0]) : null
-      if (highest && (highest.bidderName === user.name || highest.bidder?.name === user.name)) {
+      const endsRaw = listing.endsAt || listing.deadline || listing.ends_at
+      const ends = new Date(endsRaw).getTime()
+      if (!endsRaw || isNaN(ends) || ends > now) return // still active or invalid
+      if (!Array.isArray(listing.bids) || listing.bids.length === 0) return
+      let highest = listing.bids[0]
+      for (let i = 1; i < listing.bids.length; i++) {
+        const bid = listing.bids[i]
+        if (bid.amount > highest.amount) highest = bid
+      }
+      const highestBidderName = highest.bidderName || highest.bidder?.name
+      if (highestBidderName === user.name) {
         winsMap.set(listing.id, listing)
       }
     })
-    const wins = Array.from(winsMap.values())
+    // Sort wins by ended date (most recent first)
+    const wins = Array.from(winsMap.values()).sort((a, b) => {
+      const ea = new Date(a.endsAt || a.deadline || a.ends_at).getTime()
+      const eb = new Date(b.endsAt || b.deadline || b.ends_at).getTime()
+      return eb - ea
+    })
 
     // Tab rendering
     const tabListings = document.getElementById('tab-listings')
@@ -216,23 +247,31 @@ if (!canProceed) {
       empty.className = 'text-sm text-gray-500'
       empty.textContent = 'No wins yet.'
       tabWins.appendChild(empty)
+    } else {
+      const winsGrid = document.createElement('div')
+      winsGrid.className = 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3'
+      tabWins.appendChild(winsGrid)
+      wins.forEach(l => {
+        const adapted = {
+          id: l.id,
+          title: l.title,
+          description: l.description,
+          tags: l.tags || [],
+          media: (l.media || []).map(m => (typeof m === 'string' ? m : m.url)).filter(Boolean),
+          deadline: l.endsAt || l.deadline,
+          ownerName: l.seller?.name || l.profile?.name,
+          highest: l.bids?.length ? Math.max(...l.bids.map(b => b.amount)) : 0,
+        }
+        const card = renderListingCard(adapted)
+        // Badge overlay
+        card.classList.add('relative')
+        const badge = document.createElement('span')
+        badge.textContent = 'Won'
+        badge.className = 'absolute top-2 left-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded shadow'
+        card.appendChild(badge)
+        winsGrid.appendChild(card)
+      })
     }
-    const winsGrid = document.createElement('div')
-    winsGrid.className = 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3'
-    tabWins.appendChild(winsGrid)
-    wins.forEach(l => {
-      const adapted = {
-        id: l.id,
-        title: l.title,
-        description: l.description,
-        tags: l.tags || [],
-        media: (l.media || []).map(m => (typeof m === 'string' ? m : m.url)).filter(Boolean),
-        deadline: l.endsAt || l.deadline,
-        ownerName: l.seller?.name || l.profile?.name,
-        highest: l.bids?.length ? Math.max(...l.bids.map(b => b.amount)) : 0,
-      }
-      winsGrid.appendChild(renderListingCard(adapted))
-    })
 
     // Tab switching logic
     const tabButtons = document.querySelectorAll('.dash-tab')

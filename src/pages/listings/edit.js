@@ -53,7 +53,7 @@ if (canEdit) {
       if (confirm('Delete listing?')) {
         try {
           await apiDeleteListing(id)
-          location.href = '/listings/'
+          location.href = '/'
         } catch (err) {
           msg.textContent = err.message || 'Delete failed'
           msg.className = 'text-sm text-red-600'

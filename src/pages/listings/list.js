@@ -106,7 +106,7 @@ async function fetchMoreIfNeeded() {
   if (totalAvailable != null && cache.length >= totalAvailable) { done = true; return }
   loading = true
   try {
-    const baseParams = { limit: SERVER_PAGE_SIZE, page, _bids: true, sort: 'created', sortOrder: 'desc' }
+    const baseParams = { limit: SERVER_PAGE_SIZE, page, _bids: true, _seller: true, sort: 'created', sortOrder: 'desc' }
     if (appliedActiveOnly) baseParams._active = true
     // Server only supports one _tag; if multiple selected we still send first to reduce payload
     if (appliedTags.length >= 1) baseParams._tag = appliedTags[0]

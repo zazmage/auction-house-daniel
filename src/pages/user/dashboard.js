@@ -235,6 +235,7 @@ if (!canProceed) {
             deadline: l.endsAt || l.deadline,
             ownerName: l.seller?.name || l.profile?.name,
             highest: l.bids?.length ? Math.max(...l.bids.map(b => b.amount)) : 0,
+            bids: Array.isArray(l.bids) ? l.bids : [],
           }
           bidsGrid.appendChild(renderListingCard(adapted))
         })
@@ -261,6 +262,7 @@ if (!canProceed) {
           deadline: l.endsAt || l.deadline,
           ownerName: l.seller?.name || l.profile?.name,
           highest: l.bids?.length ? Math.max(...l.bids.map(b => b.amount)) : 0,
+          bids: Array.isArray(l.bids) ? l.bids : [],
         }
         const card = renderListingCard(adapted)
         // Badge overlay

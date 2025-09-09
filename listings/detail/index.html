@@ -20,7 +20,14 @@
         <h1 id="detail-title" class="text-3xl font-semibold tracking-tight"></h1>
         <p id="detail-description" class="text-sm text-gray-700"></p>
       </header>
-      <div id="detail-media" class="flex gap-3 flex-wrap"></div>
+      <!-- Main image -->
+      <div id="main-image-wrap" class="relative">
+        <img id="main-image" alt="listing image"
+          class="w-full max-h-[420px] object-cover rounded-[12px] shadow cursor-pointer hidden" />
+        <div id="no-image"
+          class="w-full h-48 bg-gray-100 rounded-[12px] flex items-center justify-center text-sm text-gray-500">No image
+        </div>
+      </div>
       <div class="grid sm:grid-cols-3 gap-4 text-sm">
         <p><span class="font-semibold text-gray-800">Deadline:</span> <span id="detail-deadline"></span></p>
         <p><span class="font-semibold text-gray-800">Owner:</span> <span id="detail-owner"></span></p>
@@ -47,9 +54,42 @@
           Bid</button>
         <p id="bid-msg" class="text-xs font-medium"></p>
       </form>
+
+      <!-- Media gallery below bid section -->
+      <section id="media-gallery-section" class="space-y-3">
+        <h2 class="text-lg font-semibold">Media Gallery</h2>
+        <div class="relative">
+          <button id="gallery-prev" type="button"
+            class="absolute -left-3 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full shadow p-2 hidden"
+            aria-label="Previous images">
+            <span class="inline-block rotate-180">➜</span>
+          </button>
+          <div id="media-gallery" class="flex gap-3 overflow-x-auto pr-2"></div>
+          <button id="gallery-next" type="button"
+            class="absolute -right-3 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full shadow p-2 hidden"
+            aria-label="Next images">
+            <span class="inline-block">➜</span>
+          </button>
+        </div>
+      </section>
     </article>
   </main>
   <footer id="site-footer" class="mt-8"></footer>
+  <!-- Modal viewer -->
+  <div id="image-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+    <button id="modal-close" class="absolute top-4 right-4 text-white text-2xl cursor-pointer"
+      aria-label="Close">✕</button>
+    <div class="relative flex items-center">
+      <button id="modal-prev"
+        class="absolute -left-12 text-white text-5xl cursor-pointer select-none bg-white/10 hover:bg-white/20 rounded-full p-2"
+        aria-label="Prev">❮</button>
+      <img id="modal-image" alt="preview" class="max-w-[90vw] max-h-[85vh] rounded shadow-lg" />
+      <button id="modal-next"
+        class="absolute -right-12 text-white text-5xl cursor-pointer select-none bg-white/10 hover:bg-white/20 rounded-full p-2"
+        aria-label="Next">❯</button>
+    </div>
+    <div id="modal-dots" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"></div>
+  </div>
   <script type="module" src="/src/pages/listings/detail.js"></script>
 </body>
 

@@ -8,6 +8,8 @@ boot()
 const params = new URLSearchParams(location.search)
 const id = params.get('id')
 let currentListing
+let media = []
+let currentIndex = 0
 const form = document.getElementById('bid-form')
 const bidMsg = document.getElementById('bid-msg')
 const loginCta = document.getElementById('login-cta')
@@ -52,15 +54,39 @@ function render() {
   document.getElementById('detail-deadline').textContent = new Date(listing.deadline).toLocaleString()
   document.getElementById('detail-owner').textContent = listing.ownerName
   document.getElementById('detail-highest').textContent = listing.highest
-  const mediaWrap = document.getElementById('detail-media')
-  mediaWrap.innerHTML = ''
-  listing.media.forEach(url => {
-    const img = document.createElement('img')
-    img.src = url
-    img.alt = ''
-    img.className = 'w-40 h-24 object-cover rounded'
-    mediaWrap.appendChild(img)
-  })
+  // Main image + gallery setup
+  media = listing.media
+  const mainImg = document.getElementById('main-image')
+  const noImage = document.getElementById('no-image')
+  const gallery = document.getElementById('media-gallery')
+  const gPrev = document.getElementById('gallery-prev')
+  const gNext = document.getElementById('gallery-next')
+  gallery.innerHTML = ''
+  if (media.length) {
+    currentIndex = 0
+    mainImg.src = media[0]
+    mainImg.classList.remove('hidden')
+    noImage.classList.add('hidden')
+    media.forEach((url, idx) => {
+      const t = document.createElement('img')
+      t.src = url
+      t.alt = ''
+      t.className = 'w-28 h-20 object-cover rounded cursor-pointer border border-transparent hover:border-[var(--color-primary)]'
+      t.addEventListener('click', () => openModalAt(idx))
+      gallery.appendChild(t)
+    })
+    const updateArrows = () => {
+      const overflow = gallery.scrollWidth > gallery.clientWidth
+      gPrev.classList.toggle('hidden', !overflow)
+      gNext.classList.toggle('hidden', !overflow)
+    }
+    // defer to after paint
+    setTimeout(updateArrows, 0)
+    window.addEventListener('resize', updateArrows)
+  } else {
+    mainImg.classList.add('hidden')
+    noImage.classList.remove('hidden')
+  }
   const history = document.getElementById('bid-history')
   history.innerHTML = ''
   listing.bids.slice().sort((a, b) => new Date(b.created) - new Date(a.created)).forEach(b => {
@@ -86,6 +112,75 @@ function render() {
     form.classList.remove('hidden')
     if (loginCta) loginCta.classList.add('hidden')
   }
+}
+
+// Modal viewer logic
+const modal = document.getElementById('image-modal')
+const modalImg = document.getElementById('modal-image')
+const modalClose = document.getElementById('modal-close')
+const modalPrev = document.getElementById('modal-prev')
+const modalNext = document.getElementById('modal-next')
+const modalDots = document.getElementById('modal-dots')
+const mainImgEl = document.getElementById('main-image')
+
+function openModalAt(idx = 0) {
+  if (!media.length) return
+  currentIndex = Math.max(0, Math.min(idx, media.length - 1))
+  modalImg.src = media[currentIndex]
+  modal.classList.remove('hidden')
+  modal.classList.add('flex')
+  renderDots()
+}
+function closeModal() {
+  modal.classList.add('hidden')
+  modal.classList.remove('flex')
+}
+function nextImg() {
+  if (!media.length) return
+  currentIndex = (currentIndex + 1) % media.length
+  modalImg.src = media[currentIndex]
+  updateDots()
+}
+function prevImg() {
+  if (!media.length) return
+  currentIndex = (currentIndex - 1 + media.length) % media.length
+  modalImg.src = media[currentIndex]
+  updateDots()
+}
+
+mainImgEl?.addEventListener('click', () => openModalAt(0))
+modalClose?.addEventListener('click', closeModal)
+modalNext?.addEventListener('click', nextImg)
+modalPrev?.addEventListener('click', prevImg)
+modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal() })
+document.addEventListener('keydown', (e) => {
+  if (modal.classList.contains('hidden')) return
+  if (e.key === 'Escape') closeModal()
+  else if (e.key === 'ArrowRight') nextImg()
+  else if (e.key === 'ArrowLeft') prevImg()
+})
+
+function renderDots() {
+  if (!modalDots) return
+  modalDots.innerHTML = ''
+  media.forEach((_, i) => {
+    const dot = document.createElement('button')
+    dot.type = 'button'
+    dot.className = 'w-2.5 h-2.5 rounded-full ' + (i === currentIndex ? 'bg-white' : 'bg-white/40 hover:bg-white/60')
+    dot.addEventListener('click', () => {
+      currentIndex = i
+      modalImg.src = media[currentIndex]
+      updateDots()
+    })
+    modalDots.appendChild(dot)
+  })
+}
+function updateDots() {
+  if (!modalDots) return
+  const children = Array.from(modalDots.children)
+  children.forEach((el, i) => {
+    el.className = 'w-2.5 h-2.5 rounded-full ' + (i === currentIndex ? 'bg-white' : 'bg-white/40 hover:bg-white/60')
+  })
 }
 
 form?.addEventListener('submit', async e => {
